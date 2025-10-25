@@ -51,7 +51,7 @@ export default function Home() {
           <img
             src="/Benefit v1.svg"
             alt="Benefit 1"
-            className="w-full h-auto max-w-xs mx-auto"
+            className="w-full h-auto max-w-xs mx-auto hover:translate-y-10 hover:shadow-md "
           />
           <img
             src="/Benefit v2.svg"
