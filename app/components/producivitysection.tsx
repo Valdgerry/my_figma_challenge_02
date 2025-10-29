@@ -60,7 +60,7 @@ const ProductivitySection: React.FC = () => {
   const indicatorPosition = isWithSpend ? "translate-x-0 " : "translate-x-full";
 
   return (
-    <div className="flex flex-col items-center justify-center gap-15 px-25 py-15">
+    <div id="SuccessStories" className="flex flex-col items-center justify-center gap-15 px-25 py-15">
       {/* 1. Bloc Titre (Identique dans les deux états) */}
       <div className="w-full flex flex-col items-start justify-center">
         <p className="text-[#7C5CFC]">INCREASE PRODUCTIVITY</p>

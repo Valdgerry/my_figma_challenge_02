@@ -1,28 +1,174 @@
 "use client";
 
-import React from "react";
-import Navbar from "./components/navbar";
+import React, { useState, useEffect } from "react";
+// Imports des composants externes non fournis (assumons qu'ils existent)
 import ToggleSwitch from "./components/toggleswitch";
 import ProductivitySection from "./components/producivitysection";
-import HeroSection from "./components/herosection";
+import Link from "next/link";
+
+// ====================================================================
+// --- Composant Home (Export par défaut) : Contient TOUTE la logique
+// ====================================================================
 
 export default function Home() {
+  // --- LOGIQUE ET COMPOSANTS INTERNES À HOME ---
+
+  const navItems = [
+    { name: "Products", href: "#products" },
+    { name: "Benefit", href: "#spendin" },
+    { name: "How it works", href: "#howitworks" },
+    { name: "Stories", href: "#stories" },
+    { name: "Pricing", href: "#pricing" },
+    { name: "Company", href: "#company" },
+  ];
+
+  const Navbar = () => (
+    <nav className="w-full h-16 px-15 border-b-1 border-gray-800 text-sm text-white flex items-center justify-between ">
+      <img src="/Logo.svg" alt="Logo" />
+      <ul className="flex items-center space-x-7">
+        {navItems.map((item) => (
+          <li key={item.name}>
+            <Link
+              href={item.href}
+              className="hover:underline transition-colors"
+            >
+              {item.name}
+            </Link>
+          </li>
+        ))}
+      </ul>
+      <div className="flex items-center justify-center gap-4">
+        <button className="bg-transparent text-white px-4 py-2 rounded-full hover:bg-[#7C5CFC] transition">
+          Log in
+        </button>
+        <button className="bg-transparent text-white px-4 py-2 rounded-full hover:bg-[#7C5CFC] transition">
+          Get Demo
+        </button>
+      </div>
+    </nav>
+  );
+
+  const BASE_TRANSITION = "transition-all duration-1000 ease-out opacity-0";
+
+  interface SlideInProps {
+    delay: number;
+    from: "top" | "bottom" | "left" | "right";
+    children: React.ReactNode;
+  }
+
+  const SlideIn: React.FC<SlideInProps> = ({ children, delay, from }) => {
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        setIsVisible(true);
+      }, delay);
+      return () => clearTimeout(timer);
+    }, [delay]);
+
+    let initialTranslate = "";
+    switch (from) {
+      case "top":
+        initialTranslate = "-translate-y-10";
+        break;
+      case "bottom":
+        initialTranslate = "translate-y-10";
+        break;
+      case "left":
+        initialTranslate = "-translate-x-10";
+        break;
+      case "right":
+        initialTranslate = "translate-x-10";
+        break;
+      default:
+        initialTranslate = "";
+    }
+
+    return (
+      <div
+        className={`${BASE_TRANSITION} ${initialTranslate} ${
+          isVisible ? "opacity-100 translate-x-0 translate-y-0" : ""
+        }`}
+      >
+        {children}
+      </div>
+    );
+  };
+
   const handleToggle = (isActive: boolean) => {
     console.log(
       `Notifications sont maintenant : ${isActive ? "ACTIVÉES" : "DÉSACTIVÉES"}`
     );
   };
-  // Mettre à jour l'état global ou enregistrer les préférences utilisateur
+
+  let delay = 1; // Délai initial pour les animations SlideIn
+
+  // --- RENDU PRINCIPAL ---
 
   return (
     <div className="w-full flex flex-col items-center justify-center">
-      {/* === SECTION 1: HERO (SCROLLABLE CONTENT, FIXED BACKGROUND) === */}
-      <HeroSection />
+      {/* === SECTION 1: HERO / ACCUEIL (id="home") === */}
+      <div
+        id="home"
+        className="w-full h-screen bg-[#0D121F] overflow-hidden relative flex flex-col items-center justify-start pb-40 gap-10"
+      >
+        {/* Background Decorative Elements (z-0) */}
+        <div className="absolute h-[300px] w-[300px] top-[-150px] right-[-150px] border-[50px] border-[#191E2A] rounded-full"></div>
+        <div className="absolute h-[300px] w-[300px] bottom-[-150px] left-[-150px] border-[50px] border-[#191E2A] rounded-full"></div>
+        <div className="absolute h-[500px] w-[500px] top-[-250px] left-[-250px] bg-gradient-to-br from-[#191E2A] to-transparent filter blur-3xl z-0"></div>
+        <div className="absolute h-[500px] w-[500px] bottom-[-250px] right-[-250px] bg-gradient-to-tl from-[#191E2A] to-transparent filter blur-3xl z-0"></div>
+
+        {/* 1. Navbar (Arrive du Haut) */}
+        <SlideIn delay={(delay += 100)} from="top">
+          <div className="w-full">
+            <Navbar />
+          </div>
+        </SlideIn>
+
+        {/* 2. Titre et Sous-titre (Arrivent du Bas) */}
+        <SlideIn delay={(delay += 100)} from="bottom">
+          <div className="flex flex-col text-center items-center justify-center gap-5 px-4 md:px-52">
+            <p className="text-4xl text-white md:text-5xl font-bold leading-snug">
+              All your business expenses in one place
+            </p>
+            <p className="text-sm md:text-base">
+              Your one-stop finance empower platform. <br /> Manage all your
+              business expenses with our supafast app.{" "}
+            </p>
+          </div>
+        </SlideIn>
+
+        {/* 3. Boutons (Arrivent du Bas avec délai) */}
+        <SlideIn delay={(delay += 150)} from="bottom">
+          <div className="grid grid-cols-2 items-center justify-center gap-5">
+            <button className="bg-[#1A202C] text-white px-6 py-3 rounded-full hover:bg-[#7C5CFC] transition text-sm">
+              Get a Free Demo
+            </button>
+            <button className="bg-[#1A202C] text-white px-6 py-3 rounded-full hover:bg-[#7C5CFC] transition text-sm">
+              See Pricing
+            </button>
+          </div>
+        </SlideIn>
+
+        {/* 4. Image du Dashboard (Arrive du Bas avec plus de délai) */}
+        <SlideIn delay={(delay += 200)} from="bottom">
+          <div className="flex items-center justify-center px-4 md:px-20 mt-10">
+            <img
+              id="spendin"
+              src="/Dashboard.png"
+              className="rounded-xl shadow-2xl max-w-full h-auto"
+              alt="dashboard"
+            />
+          </div>
+        </SlideIn>
+      </div>
 
       {/* --- SECTION 2: BENEFITS --- */}
-      <div className="w-full flex flex-col items-center py-20 bg-white text-gray-900">
+      <div
+        id="benefits"
+        className="w-full flex flex-col items-center py-20 bg-white text-gray-900"
+      >
         <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-4 gap-8 px-4 sm:px-8">
-          {/* 1. Title Column */}
           <div className="lg:col-span-1 flex flex-col items-start justify-start gap-4">
             <p className="text-sm font-semibold text-[#7C5CFC]">
               WHY USE SPEND.IN
@@ -33,8 +179,6 @@ export default function Home() {
               Affordable
             </p>
           </div>
-
-          {/* 2. Description Column (Span 2 in your original grid) */}
           <div className="lg:col-span-2 pt-0 lg:pt-7 pl-0 lg:pl-8">
             <p className="text-sm text-[#596780]">
               Our platform helps your business in managing expenses. These are
@@ -42,11 +186,7 @@ export default function Home() {
               business finances.
             </p>
           </div>
-
-          {/* 3. Empty Column (lg:col-span-1) - Implicitly handled by grid */}
         </div>
-
-        {/* Benefit Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16 max-w-7xl px-4 sm:px-8">
           <img
             src="/Benefit v1.svg"
@@ -65,11 +205,14 @@ export default function Home() {
           />
         </div>
       </div>
+
       {/* --- SECTION 3: HOW IT WORKS --- */}
-      <div className=" w-full flex flex-col bg-[#1A202C] h-screen items-center justify-center gap-15 text-white relative  overflow-hidden ">
+      <div
+        id="howitworks"
+        className=" w-full flex flex-col bg-[#1A202C] h-screen items-center justify-center gap-15 text-white relative  overflow-hidden "
+      >
         <div className="absolute h-[500px] w-[500px] top-[-150px] left-[-250px] bg-gradient-to-br from-[#434753] to-transparent filter blur-3xl z-0"></div>
         <div className="absolute h-[500px] w-[500px] bottom-[-150px] right-[-250px] bg-gradient-to-tl from-[#434753] to-transparent filter blur-3xl z-0"></div>
-
         <div className=" flex flex-col items-center justify-center gap-3 ">
           <p className=" text-[#7C5CFC] ">HOW IT WORKS</p>
           <p className=" text-3xl font-bold ">Few Easy Steps and Done</p>
@@ -107,14 +250,19 @@ export default function Home() {
           </button>
         </div>
       </div>
-      {/* --- SECTION 4: SUCCESS STORIES --- */}
-      <ProductivitySection />
+
+      {/* --- SECTION 4: SUCCESS STORIES (ProductivitySection) --- */}
+      <div id="stories">
+        <ProductivitySection />
+      </div>
 
       {/* --- SECTION 5: TESTIMONIALS --- */}
-      <div className=" flex flex-col bg-[#1A202C] h-auto items-center justify-center gap-15 text-white pt-25 pb-5 relative overflow-hidden ">
+      <div
+        id="testimonials"
+        className=" flex flex-col bg-[#1A202C] h-auto items-center justify-center gap-15 text-white pt-25 pb-5 relative overflow-hidden "
+      >
         <div className="absolute h-[500px] w-[500px] top-[-150px] left-[-250px] bg-gradient-to-br from-[#434753] to-transparent filter blur-3xl z-[-10]"></div>
         <div className="absolute h-[500px] w-[500px] bottom-[-150px] right-[-250px] bg-gradient-to-tl from-[#434753] to-transparent filter blur-3xl z-0"></div>
-
         <div className="  flex flex-col items-center justify-center gap-3  ">
           <p className=" text-[#7C5CFC] ">WHAT THEY SAY</p>
           <p className=" text-3xl font-bold ">Our User Kind Words</p>
@@ -186,8 +334,12 @@ export default function Home() {
           </button>
         </div>
       </div>
+
       {/* --- SECTION 6: PRICING PLANS --- */}
-      <div className=" w-full h-auto flex flex-col gap-10 items-center justify-center text-[14px] pb-10 ">
+      <div
+        id="pricing"
+        className=" w-full h-auto flex flex-col gap-10 items-center justify-center text-[14px] pb-10 "
+      >
         <div className="flex flex-col items-center justify-center gap-5">
           <p className=" text-center text-4xl font-semibold pt-25  ">
             {" "}
@@ -214,8 +366,12 @@ export default function Home() {
           <img src="/Ultimate Plan.svg" alt="" className=" h-[500px] " />
         </div>
       </div>
-      {/* --- SECTION 7: CALL TO ACTION --- */}
-      <div className=" w-full h-auto bg-[#1A202C]  flex items-center justify-center   ">
+
+      {/* --- SECTION 7: CALL TO ACTION / Company --- */}
+      <div
+        id="company"
+        className=" w-full h-auto bg-[#1A202C]  flex items-center justify-center   "
+      >
         <div className=" w-full grid grid-cols-2 items-center justify-center gap-20 ">
           <div className=" flex flex-col items-start justify-center text-start text-white gap-3 pl-35 py-25 ">
             <p className=" text-[#7C5CFC] ">DOWNLOAD NOW!</p>
@@ -235,6 +391,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+
       <div>
         <img src="/Footer.svg" alt="" />
       </div>

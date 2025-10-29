@@ -62,7 +62,10 @@ const HeroSection = () => {
   let delay = 1; // Délai initial
 
   return (
-    <div className="w-full h-screen bg-[#0D121F] overflow-hidden relative">
+    <div
+      id="HeroSection"
+      className="w-full h-screen bg-[#0D121F] overflow-hidden relative"
+    >
       {/* ... (Éléments décoratifs en arrière-plan inchangés) ... */}
       <div className="absolute h-[300px] w-[300px] top-[-150px] right-[-150px] border-[50px] border-[#191E2A] rounded-full"></div>
       <div className="absolute h-[300px] w-[300px] bottom-[-150px] left-[-150px] border-[50px] border-[#191E2A] rounded-full"></div>
